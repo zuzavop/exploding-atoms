@@ -19,11 +19,11 @@ class Help:
 
         self.running = True
 
-        # nastaveni velikosti okna
+        # set window size
         self.width = width
         self.height = height
 
-        # vytvoreni menitelneho okna s predanymi rozmery
+        # create window
         self.display: pygame.Surface = pygame.display.set_mode((self.width, self.height), pygame.RESIZABLE)
 
         self.font = pygame.font.Font('freesansbold.ttf', self.display.get_width() // 50)

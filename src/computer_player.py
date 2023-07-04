@@ -27,65 +27,63 @@ class Computer:
         self.maximum = 0
         self.optimal = []
 
-        if self.ending:  # pokud jeste neskoncila hra
-
-            optimal_coor = self.pick_atom()  # odhad nejlepsiho tahu
-            if optimal_coor:
-                self.optimal = self.atoms[optimal_coor[0]][optimal_coor[1]]
-                self.optimal.adding()  # zvetseni hodnoty vybraneho atomu
+        if self.ending:
+            optimal_coord = self.pick_atom()  # approximation of best turn
+            if optimal_coord:
+                self.optimal = self.atoms[optimal_coord[0]][optimal_coord[1]]
+                self.optimal.adding()
 
     def add(self, atom, number, numbers):
-        """"simuluje" zvetseni vybraneho atomu"""
+        """ simulation of adding to atom """
         if number > 0:
-            if numbers[atom.x][atom.a] < (len(atom.neighbours) - 1):
+            if numbers[atom.x][atom.y] < (len(atom.neighbours) - 1):
                 self.extension += 1
-                numbers[atom.x][atom.a] += 1
+                numbers[atom.x][atom.y] += 1
             else:
-                numbers[atom.x][atom.a] = 0
-                for b in range(len(atom.neighbours)):
-                    self.add(atom.neighbours[b], number - 1, numbers)
+                numbers[atom.x][atom.y] = 0
+                for neighbour in atom.neighbours:
+                    self.add(neighbour, number - 1, numbers)
 
     def make_copy(self):
-        """vytvori kopie Atomu s aktualnimi hodnotami, barvami a jejich sousedy"""
+        """ creation of atom copy with current values """
         numbers = []
         self.copy = []
         for x in range(self.field_size):
             helper = []
             help_num = []
-            for a in range(self.field_size):
-                helper.append(AtomsCopy([], self.atoms[x][a].text, self.atoms[x][a].color, x, a))
-                help_num.append(self.atoms[x][a].text)
+            for y in range(self.field_size):
+                helper.append(AtomsCopy([], self.atoms[x][y].text, self.atoms[x][y].color, x, y))
+                help_num.append(self.atoms[x][y].text)
             self.copy.append(helper)
             numbers.append(help_num)
 
         move = [[0, 1], [0, -1], [1, 0], [-1, 0]]
 
-        for x in range(self.field_size):  # vyzkouseni vsech moznych sousedu
-            for a in range(self.field_size):
-                for heave in range(len(move)):
-                    current_x = x + move[heave][0]
-                    current_a = a + move[heave][1]
-                    if (current_x < self.field_size) and (current_x >= 0) and (current_a < self.field_size) and (
-                            current_a >= 0):
-                        self.copy[x][a].add_neighbour(self.copy[current_x][current_a])  # pridani souseda k atomu
+        for x in range(self.field_size):  # try all neighbours
+            for y in range(self.field_size):
+                for dx, dy in move:
+                    current_x = x + dx
+                    current_y = y + dy
+                    if 0 <= current_x < self.field_size and 0 <= current_y < self.field_size:
+                        self.copy[x][y].add_neighbour(self.copy[current_x][current_y])  # add neighbour to atom
 
         return numbers
 
     def pick_atom(self):
-        """zkousi simulovat zvetsovani nekterych atomu a vybere nejlepsi mozny"""
+        """ try simulation adding some atoms and pick the best of them """
         optimal = []
-        # najde nebezpecne atomy soupere, tedy ty ktere mohou explodovat v nasledujicim kole
+        # find danger atoms of opponent (which can explode in next turn)
         danger_atoms = self.find_danger(1,"blue")
-        good_choice = self.find_danger(2, "red")  # najde atomy, ktere mohou explodovat do dvou kol
+        good_choice = self.find_danger(2, "red")  # find atoms, which can explode in two rounds
+
         if danger_atoms:
             numbers = self.make_copy()
             self.minimax(good_choice, danger_atoms, self.copy, numbers, 0, [], 3, True, True)
             optimal = self.optimal
+
         if not optimal:
-            """pokud nejsou zadne nebezpecne atomy soupere nebo se nepovedlo vybrat optialni atom
-            vybere atomy ktere exploduji toto kolo a pokud takove nejsou tak nahodne vybere nejaky 
-            ktery jeste neni obarveny a mohl by explodovat do dvou kol
-            pokud neni ani takovy vybere nejaky ktery je jiz obarveny a mohl by explodovat do dvou kol"""
+            """ if none opponents atoms are dangerous or none optimal atom was found
+            choose atom that can explode in this turn or in next turn"""
             better_choice = self.find_danger(1, "red")
             if better_choice:
                 optimal = random.choice(better_choice)
@@ -95,31 +93,32 @@ class Computer:
                     optimal = random.choice(first_choice)
                 elif good_choice:
                     optimal = random.choice(good_choice)
-                else:  # pokud by ani tak nenasel zadny atom tak se vybere jakykoli volny nebo jiz obarveny, ktery vsak vybuchne az za vice jak 3 kola
+                else:  # if none atom was found - choose randomly
                     last_choice = self.find_danger(4, "red")
                     if last_choice:
                         optimal = random.choice(last_choice)
+
         return optimal
 
     def find_danger(self, depth, color, color2="black"):
-        """najde atomy dane barvy, ktere moho do daneho poctu kol(depth) explodovat"""
+        """ find atom of given color which can explode in given number of rounds """
         danger = []
         for x in range(self.field_size):
-            for a in range(self.field_size):
-                if self.atoms[x][a].color == color or self.atoms[x][a].color == color2:
-                    if self.atoms[x][a].text >= len(self.atoms[x][a].neighbours) - depth:
-                        danger.append([x, a])
+            for y in range(self.field_size):
+                atom = self.atoms[x][y]
+                if (atom.color == color or atom.color == color2) and (atom.text >= len(atom.neighbours) - depth):
+                        danger.append([x, y])
         return danger
 
     def minimax(self, good_choice, danger_atoms, copy_atoms, atom_numbers, maxi, optim, depth, player, first):
-        """pomoci algoritmu minimaxu se hleda nejlepsi mozny tah na nasledujici dve kola"""
+        """ search the best atom for this and next round using minimax"""
         if depth <= 0:
             if maxi > self.maximum:
                 self.maximum = maxi
                 self.optimal = optim
         else:
             if player:
-                hook = [x[:] for x in atom_numbers]  # kvuli uplne kopii listu v listu
+                hook = [x[:] for x in atom_numbers]
                 for atom1 in good_choice:
                     if first:
                         optim = atom1
@@ -139,14 +138,14 @@ class Computer:
 
 
 class AtomsCopy:
-    """kopie atomu pouze z potrebnymi argumenty - aby se nemenili zobrazovane atomy"""
+    """ atom copy with needed values - for computing """
 
-    def __init__(self, neighbours, text, color, x, a):
+    def __init__(self, neighbours, text, color, x, y):
         self.neighbours = neighbours
         self.text = text
         self.color = color
         self.x = x
-        self.a = a
+        self.y = y
 
     def add_neighbour(self, neighbour):
         self.neighbours.append(neighbour)
