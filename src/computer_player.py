@@ -9,6 +9,8 @@ zimní semestr 2020/21
 
 import random
 
+import numpy as np
+
 
 class Computer:
     def __init__(self, field_size):
@@ -46,16 +48,13 @@ class Computer:
 
     def make_copy(self):
         """ creation of atom copy with current values """
-        numbers = []
-        self.copy = []
+        numbers = np.zeros((self.field_size, self.field_size), dtype=int)
+        self.copy = np.empty((self.field_size, self.field_size), dtype=AtomsCopy)
+
         for x in range(self.field_size):
-            helper = []
-            help_num = []
             for y in range(self.field_size):
-                helper.append(AtomsCopy([], self.atoms[x][y].text, self.atoms[x][y].color, x, y))
-                help_num.append(self.atoms[x][y].text)
-            self.copy.append(helper)
-            numbers.append(help_num)
+                self.copy[x, y] = AtomsCopy([], self.atoms[x, y].text, self.atoms[x, y].color, x, y)
+                numbers[x, y] = self.atoms[x, y].text
 
         move = [[0, 1], [0, -1], [1, 0], [-1, 0]]
 

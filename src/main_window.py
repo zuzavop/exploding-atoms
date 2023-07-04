@@ -15,7 +15,7 @@ from os import environ
 from setting import colors, window_width, window_height, field_size
 
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
-# kvuli skrytí vyzvy od pygame
+# because of hiding od pygame support
 
 import pygame
 
@@ -26,43 +26,42 @@ import button
 
 class Menu:
     def __init__(self):
-        # inicializace pygame
         pygame.init()
 
-        # nastaveni preferovanych oteviracich rozmeru
+        # window size
         self.width = window_width
         self.height = window_height
 
         self.running = True
         self.computer_play = False
 
-        # rozmer pole
+        # field size
         self.field_size = field_size
 
-        # nastaveni barev tlacitek
+        # buttons colors
         self.color11, self.color22, self.color31 = "white", colors["aqua"], "white"
         self.color12, self.color21, self.color32 = colors["aqua"], colors["aqua"], colors["aqua"]
         self.color41, self.color51 = "white", colors["aqua"]
         self.color42, self.color52 = colors["aqua"], colors["aqua"]
 
-        # vytvoreni menitelneho okna o preferovanych rozmerech
+        # create window
         self.display: pygame.Surface = pygame.display.set_mode((self.width, self.height), pygame.RESIZABLE)
 
-        # nastaveni fontu
+        # set font
         self.font = pygame.font.Font('..\\res\\font_title.ttf', self.display.get_width() // 20)
 
     def main_cycle(self):
-        """hlavni cyklus, ktery vykresluje menu"""
+        """ main cycle of menu """
 
-        # nacteni pozadi
+        # background load
         bg = pygame.image.load("..\\res\\universe.jpg")
         picture = pygame.transform.scale(bg, (self.display.get_width(), self.display.get_height()))
 
-        # nastaveni parametru nadpisu
+        # set title
         title = self.font.render('Exploding  Atoms', True, colors["white"])
         title_rect = title.get_rect()
 
-        # vytvoreni tlacitek
+        # button creation
         start_button = button.Button("Start", colors["black"], colors["white"], self.start_game)
 
         against_computer_button = button.Button("Proti počítači", colors["black"], colors["black"],
@@ -77,10 +76,10 @@ class Menu:
         help_button = button.Button("Pravidla", colors["black"], colors["black"], self.show_help)
 
         while self.running:
-            # nastaveni pozadi
+            # set background
             self.display.blit(picture, (0, 0))
 
-            # zobrazeni nadpisu
+            # show title
             title_rect.center = (self.display.get_width() // 2, 1.5 * self.display.get_height() // 8)
             self.display.blit(title, title_rect)
 
@@ -88,10 +87,10 @@ class Menu:
                               self.display.get_width() // 6, self.display.get_height() // 9, colors["white"],
                               colors["aqua"])
 
-            if not self.running:  # pokud je hra zavřena v hracím okně
+            if not self.running:
                 break
 
-            # zobrazeni tlacitek
+            # show buttons
             against_computer_button.show(self.display, 3 * self.display.get_width() // 8,
                                          5.4 * self.display.get_height() // 8, self.display.get_width() // 5,
                                          self.display.get_height() // 16, self.color41, self.color42)
@@ -113,11 +112,11 @@ class Menu:
                              self.display.get_width() // 6, self.display.get_height() // 9, colors["white"],
                              colors["aqua"])
 
-            for event in pygame.event.get():  # kontrola pygame event a vyvolani reakce
-                if event.type == pygame.QUIT:  # uzavreni hry
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
                     self.running = False
 
-                elif event.type == pygame.VIDEORESIZE:  # zmena velikosti okna
+                elif event.type == pygame.VIDEORESIZE:  # change of size
                     self.font = pygame.font.Font('..\\res\\font_title.ttf', self.display.get_width() // 20)
                     picture = pygame.transform.scale(bg, (self.display.get_width(), self.display.get_height()))
                     title = self.font.render('Exploding  Atoms', True, colors["white"])
@@ -134,7 +133,6 @@ class Menu:
         helping = help_window.Help(self.display.get_width(), self.display.get_height())
         self.running = helping.start()
 
-    # inicializace prenastaveni barev tlacitek a velikosti hraciho pole
     def set_small_field(self):
         self.field_size = 4
         self.color12, self.color21, self.color31 = colors["aqua"], colors["white"], colors["white"]
@@ -150,7 +148,6 @@ class Menu:
         self.color11, self.color21, self.color32 = colors["white"], colors["white"], colors["aqua"]
         self.color12, self.color22, self.color31 = colors["aqua"], colors["aqua"], colors["aqua"]
 
-    # inicializace prenastaveni barev tlacitek a nastaveni hrace
     def set_computer_player(self):
         self.computer_play = True
         self.color41, self.color51 = colors["aqua"], colors["white"]

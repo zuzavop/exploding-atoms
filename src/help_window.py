@@ -31,34 +31,33 @@ class Help:
     def start(self, ending=False):
         """hlavni cyklus Napovedy"""
         hint = []
-        shift = self.display.get_height() // 3  # posunuti textu napovedy
-        for line in hint_text:  # nacteni textu napovedy a nastaveni jeho polohy v okne
+        shift = self.display.get_height() // 3  # shift text of help
+        for line in hint_text:
             self.show_help(shift, hint, line)
             shift += self.display.get_height() // 15
 
         bg = pygame.image.load("..\\res\\universe.jpg")
         picture = pygame.transform.scale(bg, (self.display.get_width(), self.display.get_height()))
 
-        # vytvoreni zpetneho tlacitka
         back_button = button.Button("Zpět", "white", colors["aqua"], self.back)
 
         while self.running:
-            # nastaveni pozadi
+            # set background
             self.display.blit(picture, (0, 0))
 
-            for a in range(len(hint)):  # zobrazeni textu
+            for a in range(len(hint)):  # show text
                 self.display.blit(hint[a][0], hint[a][1])
 
             back_button.show(self.display, self.display.get_width() - (self.display.get_width() / 20),
                       self.display.get_height() // 100, self.display.get_width() // 7,
                       self.display.get_height() // 10)
 
-            for event in pygame.event.get():  # kontrola novych pygame udalosti
+            for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    ending = True  # uzavreni okna menu
+                    ending = True
                     self.back()
 
-                elif event.type == pygame.VIDEORESIZE:  # zmena velikosti okna - prenastaveni rozmeru
+                elif event.type == pygame.VIDEORESIZE:  # change window size
                     self.font = pygame.font.Font('freesansbold.ttf', self.display.get_width() // 50)
                     picture = pygame.transform.scale(bg, (self.display.get_width(), self.display.get_height()))
                     shift = self.display.get_height() // 3
@@ -70,7 +69,7 @@ class Help:
             pygame.display.update()
 
         if ending:
-            return False  # ukonceni menu okna
+            return False
         else:
             return True
 
@@ -81,5 +80,5 @@ class Help:
         hint.append([text, text_rect])
 
     def back(self):
-        """ukonceni aktualniho okna napovedy"""
+        """ end current window """
         self.running = False

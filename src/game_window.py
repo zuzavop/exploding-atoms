@@ -60,7 +60,7 @@ class Game:
 
         # set size and coordination of atoms
         size = self.display.get_height() // int(self.field_size * 1.7)
-        currentx, currenty = (self.display.get_width() // 2 - (self.field_size / 2) * (
+        current_x, current_y = (self.display.get_width() // 2 - (self.field_size / 2) * (
                     size + 10)) + 5, self.display.get_height() // 2 - (self.field_size / 2) * (
                                          size + 10) + self.display.get_height() // 100
 
@@ -80,12 +80,12 @@ class Game:
                       self.display.get_height() // 10)
 
             # field with atoms
-            x1, y1 = currentx, currenty
+            x1, y1 = current_x, current_y
             for x in range(len(self.atoms)):
                 for a in range(len(self.atoms[x])):
                     self.atoms[x][a].run(size, x1, y1)
                     x1 += size + 10
-                x1 = currentx
+                x1 = current_x
                 y1 += size + 10
 
             self.win_check()  # control of end
@@ -103,7 +103,7 @@ class Game:
                     self.font = pygame.font.Font('freesansbold.ttf', self.display.get_width() // 43)
                     picture = pygame.transform.scale(bg, (self.display.get_width(), self.display.get_height()))
                     size = self.display.get_height() // int(self.field_size * 1.7)
-                    currentx, currenty = (self.display.get_width() // 2 - (self.field_size / 2) * (
+                    current_x, current_y = (self.display.get_width() // 2 - (self.field_size / 2) * (
                                 size + 10)) + 5, self.display.get_height() // 2 - (self.field_size / 2) * (
                                                      size + 10) + self.display.get_height() // 100
 
@@ -113,8 +113,7 @@ class Game:
                     else:
                         for x in range(len(self.atoms)):
                             for a in range(len(self.atoms[x])):
-                                self.atoms[x][
-                                    a].clicked()  # find clicked atom
+                                self.atoms[x][a].clicked()  # find clicked atom
 
             pygame.display.update()
 
