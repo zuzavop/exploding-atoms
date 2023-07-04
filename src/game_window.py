@@ -43,7 +43,7 @@ class Game:
         self.computer_play = computer_play
         self.computer = computer_player.Computer(self.field_size)
 
-    def start(self, ending=False):
+    def start(self):
         """ game cycle """
         self.buttons()
 
@@ -56,6 +56,16 @@ class Game:
         # create back button
         back_button = button.Button(texts["back"], colors["white"], colors["aqua"], self.exit)
 
+        ending = self.main_cycle(picture, size, current_x, current_y, back_button, bg)
+
+        if ending:
+            return False
+        else:  # return to menu
+            return True
+
+
+    def main_cycle(self, picture, size, current_x, current_y, back_button, bg):
+        ending = False
         while self.running:
             self.display.blit(picture, (0, 0))  # set background
 
@@ -103,10 +113,7 @@ class Game:
 
             pygame.display.update()
 
-        if ending:
-            return False
-        else:  # return to menu
-            return True
+        return ending
 
     def get_current_coordination(self):
         size = self.display.get_height() // int(self.field_size * 1.7)
