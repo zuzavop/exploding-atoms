@@ -10,6 +10,7 @@ zimní semestr 2020/21
 import pygame
 
 from setting import colors
+from utils import is_clicked_button
 
 
 class Atom:
@@ -34,8 +35,7 @@ class Atom:
 
     def clicked(self):
         """ checks mouse position after clicking """
-        mouse_pos = pygame.mouse.get_pos()
-        if self.x < mouse_pos[0] < self.x + self.size and self.y < mouse_pos[1] < self.y + self.size:
+        if is_clicked_button(self.x, self.y, self.size, self.size):
             # check if opponent tries to click a button of their color
             if not ((self.game.counter.is_red_turn() and self.color == 'blue') or (
                     self.game.counter.is_blue_turn() and self.color == 'red')):

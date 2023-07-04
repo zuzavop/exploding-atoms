@@ -17,3 +17,10 @@ hint_text = ["Hráči střídavě vybírají políčka neboli atomy z hracího p
              "které tam již byly, přebarví na svou barvu. Soupeřovi vlastní atomy zůstávají a pokud je atom",
              "znovu naplněn následuje další exploze. Vyhrává hráč, který eliminuje soupeře,",
              "tedy jinak řečeno dokáže obarvit celé hrací pole svou barvou."]
+
+texts = {
+    "first_turn": "Na tahu je první hráč",
+    "second_turn": "Na tahu je druhý hráč",
+    "computer_turn": "Na tahu je počítač",
+    "back": "Zpět"
+}

@@ -9,6 +9,8 @@ zimní semestr 2020/21
 
 import pygame
 
+from src.utils import is_clicked_button
+
 
 class Button:
     def __init__(self, title, text_color, text_color_over, action=None, font_size=34):
@@ -24,10 +26,9 @@ class Button:
         # set font
         small_text = pygame.font.Font("freesansbold.ttf", display.get_width() // self.font_size)
 
-        mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
 
-        if x + (width / 2) > mouse[0] > x - (width / 2) and y + height > mouse[1] > y:
+        if is_clicked_button(x - (width / 2), y, width, height):
             # if mouse is on the button coordinates - change colors
             if bc_over is not None:
                 pygame.draw.rect(display, bc_over, (x - (width / 2), y, width, height))

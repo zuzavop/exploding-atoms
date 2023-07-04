@@ -11,7 +11,7 @@ import random
 
 import numpy as np
 
-from utils import try_all_neighbours
+from utils import try_all_neighbours, AtomsCopy
 
 
 class Computer:
@@ -55,8 +55,8 @@ class Computer:
 
         for x in range(self.field_size):
             for y in range(self.field_size):
-                self.copy[x, y] = AtomsCopy([], self.atoms[x, y].text, self.atoms[x, y].color, x, y)
-                numbers[x, y] = self.atoms[x, y].text
+                self.copy[x, y] = AtomsCopy([], self.atoms[x, y].texts, self.atoms[x, y].color, x, y)
+                numbers[x, y] = self.atoms[x, y].texts
 
         try_all_neighbours(self.field_size, self.copy)
 
@@ -66,7 +66,7 @@ class Computer:
         """ try simulation adding some atoms and pick the best of them """
         optimal = []
         # find danger atoms of opponent (which can explode in next turn)
-        danger_atoms = self.find_danger(1,"blue")
+        danger_atoms = self.find_danger(1, "blue")
         good_choice = self.find_danger(2, "red")  # find atoms, which can explode in two rounds
 
         if danger_atoms:
@@ -99,8 +99,8 @@ class Computer:
         for x in range(self.field_size):
             for y in range(self.field_size):
                 atom = self.atoms[x][y]
-                if (atom.color == color or atom.color == color2) and (atom.text >= len(atom.neighbours) - depth):
-                        danger.append([x, y])
+                if (atom.color == color or atom.color == color2) and (atom.texts >= len(atom.neighbours) - depth):
+                    danger.append([x, y])
         return danger
 
     def minimax(self, good_choice, danger_atoms, copy_atoms, atom_numbers, maxi, optim, depth, player, first):
@@ -128,17 +128,3 @@ class Computer:
                     self.minimax(good_choice, danger_atoms, copy_atoms, atom_numbers, maxi - self.extension, optim,
                                  depth - 1, True, False)
                     atom_numbers = helper[:]
-
-
-class AtomsCopy:
-    """ atom copy with needed values - for computing """
-
-    def __init__(self, neighbours, text, color, x, y):
-        self.neighbours = neighbours
-        self.text = text
-        self.color = color
-        self.x = x
-        self.y = y
-
-    def add_neighbour(self, neighbour):
-        self.neighbours.append(neighbour)

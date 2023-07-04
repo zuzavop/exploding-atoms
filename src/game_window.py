@@ -12,24 +12,8 @@ import pygame
 import atoms
 import button
 import computer_player
-from setting import colors, background_path
-from src.utils import try_all_neighbours
-
-
-class Counter:
-    """ use for deciding who's turn is now """
-
-    def __init__(self):
-        self.counter = 0
-
-    def draw(self):
-        self.counter = (self.counter + 1) % 2
-
-    def is_blue_turn(self):
-        return self.counter == 0
-
-    def is_red_turn(self):
-        return self.counter == 1
+from setting import colors, background_path, texts
+from utils import try_all_neighbours, Counter
 
 
 class Game:
@@ -48,7 +32,7 @@ class Game:
         self.font = pygame.font.Font('freesansbold.ttf', self.display.get_width() // (self.field_size * 5))
 
         # set title
-        self.title = self.font.render('Na tahu je první hráč', True, colors["aqua"])
+        self.title = self.font.render(texts["first_turn"], True, colors["aqua"])
         self.text = self.font.render('', True, colors["aqua"])
 
         self.numbers = {"black": self.field_size * self.field_size, "red": 0, "blue": 0}
@@ -70,7 +54,7 @@ class Game:
         size, current_x, current_y = self.get_current_coordination()
 
         # create back button
-        back_button = button.Button("Zpět", colors["white"], colors["aqua"], self.exit)
+        back_button = button.Button(texts["back"], colors["white"], colors["aqua"], self.exit)
 
         while self.running:
             self.display.blit(picture, (0, 0))  # set background
@@ -135,12 +119,10 @@ class Game:
     def change(self):
         """ change helper text after player turn """
         if self.counter.is_red_turn():
-            if self.computer_play:
-                self.title = self.font.render('Na tahu je počítač', True, colors["red"])
-            else:
-                self.title = self.font.render('Na tahu je druhý hráč', True, colors["red"])
+            self.title = self.font.render(texts["computer_turn"] if self.computer_play else texts["second_turn"], True,
+                                          colors["red"])
         else:
-            self.title = self.font.render('Na tahu je první hráč', True, colors["aqua"])
+            self.title = self.font.render(texts["first_turn"], True, colors["aqua"])
 
     def win_check(self):
         """ control of end of game """

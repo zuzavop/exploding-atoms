@@ -10,7 +10,7 @@ zimní semestr 2020/21
 import pygame
 
 import button
-from setting import hint_text, colors, background_path
+from setting import hint_text, colors, background_path, texts
 
 
 class Help:
@@ -39,7 +39,7 @@ class Help:
         bg = pygame.image.load(background_path)
         picture = pygame.transform.scale(bg, (self.display.get_width(), self.display.get_height()))
 
-        back_button = button.Button("Zpět", "white", colors["aqua"], self.back)
+        back_button = button.Button(texts["back"], "white", colors["aqua"], self.back)
 
         while self.running:
             # set background
