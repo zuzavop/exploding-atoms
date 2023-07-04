@@ -12,7 +12,7 @@ Zajištění nastavení hry a přechodů do hry a nápovědy
 
 from os import environ
 
-from setting import colors, window_width, window_height, field_size
+from setting import colors, window_width, window_height, field_size, font_path, background_path, game_title
 
 environ['PYGAME_HIDE_SUPPORT_PROMPT'] = '1'
 # because of hiding od pygame support
@@ -39,26 +39,26 @@ class Menu:
         self.field_size = field_size
 
         # buttons colors
-        self.color11, self.color22, self.color31 = "white", colors["aqua"], "white"
+        self.color11, self.color22, self.color31 = colors["white"], colors["aqua"], colors["white"]
         self.color12, self.color21, self.color32 = colors["aqua"], colors["aqua"], colors["aqua"]
-        self.color41, self.color51 = "white", colors["aqua"]
+        self.color41, self.color51 = colors["white"], colors["aqua"]
         self.color42, self.color52 = colors["aqua"], colors["aqua"]
 
         # create window
         self.display: pygame.Surface = pygame.display.set_mode((self.width, self.height), pygame.RESIZABLE)
 
         # set font
-        self.font = pygame.font.Font('..\\res\\font_title.ttf', self.display.get_width() // 20)
+        self.font = pygame.font.Font(font_path, self.display.get_width() // 20)
 
     def main_cycle(self):
         """ main cycle of menu """
 
         # background load
-        bg = pygame.image.load("..\\res\\universe.jpg")
+        bg = pygame.image.load(background_path)
         picture = pygame.transform.scale(bg, (self.display.get_width(), self.display.get_height()))
 
         # set title
-        title = self.font.render('Exploding  Atoms', True, colors["white"])
+        title = self.font.render(game_title, True, colors["white"])
         title_rect = title.get_rect()
 
         # button creation
@@ -117,9 +117,9 @@ class Menu:
                     self.running = False
 
                 elif event.type == pygame.VIDEORESIZE:  # change of size
-                    self.font = pygame.font.Font('..\\res\\font_title.ttf', self.display.get_width() // 20)
+                    self.font = pygame.font.Font(font_path, self.display.get_width() // 20)
                     picture = pygame.transform.scale(bg, (self.display.get_width(), self.display.get_height()))
-                    title = self.font.render('Exploding  Atoms', True, colors["white"])
+                    title = self.font.render(game_title, True, colors["white"])
                     title_rect = title.get_rect()
 
             pygame.display.update()

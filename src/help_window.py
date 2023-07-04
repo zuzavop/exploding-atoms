@@ -10,7 +10,7 @@ zimní semestr 2020/21
 import pygame
 
 import button
-from setting import hint_text, colors
+from setting import hint_text, colors, background_path
 
 
 class Help:
@@ -29,14 +29,14 @@ class Help:
         self.font = pygame.font.Font('freesansbold.ttf', self.display.get_width() // 50)
 
     def start(self, ending=False):
-        """hlavni cyklus Napovedy"""
+        """ main cycle of Help """
         hint = []
         shift = self.display.get_height() // 3  # shift text of help
         for line in hint_text:
             self.show_help(shift, hint, line)
             shift += self.display.get_height() // 15
 
-        bg = pygame.image.load("..\\res\\universe.jpg")
+        bg = pygame.image.load(background_path)
         picture = pygame.transform.scale(bg, (self.display.get_width(), self.display.get_height()))
 
         back_button = button.Button("Zpět", "white", colors["aqua"], self.back)

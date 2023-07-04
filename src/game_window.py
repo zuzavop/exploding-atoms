@@ -12,11 +12,12 @@ import pygame
 import atoms
 import button
 import computer_player
-from setting import colors
+from setting import colors, background_path
 
 
 class Counter:
     """ use for deciding who's turn is now """
+
     def __init__(self):
         self.counter = 0
 
@@ -55,14 +56,11 @@ class Game:
         """ game cycle """
         self.buttons()
 
-        bg = pygame.image.load("..\\res\\universe.jpg")
+        bg = pygame.image.load(background_path)
         picture = pygame.transform.scale(bg, (self.display.get_width(), self.display.get_height()))
 
         # set size and coordination of atoms
-        size = self.display.get_height() // int(self.field_size * 1.7)
-        current_x, current_y = (self.display.get_width() // 2 - (self.field_size / 2) * (
-                    size + 10)) + 5, self.display.get_height() // 2 - (self.field_size / 2) * (
-                                         size + 10) + self.display.get_height() // 100
+        size, current_x, current_y = self.get_current_coordination()
 
         # create back button
         back_button = button.Button("Zpět", colors["white"], colors["aqua"], self.exit)
@@ -73,11 +71,11 @@ class Game:
             # control current player and set help
             self.change(self.counter.counter)
             self.display.blit(self.title, (
-            self.display.get_width() // 2 - self.title.get_rect().width // 2, self.display.get_height() // 30))
+                self.display.get_width() // 2 - self.title.get_rect().width // 2, self.display.get_height() // 30))
 
             back_button.show(self.display, self.display.get_width() - (self.display.get_width() / 20),
-                      self.display.get_height() // 100, self.display.get_width() // 7,
-                      self.display.get_height() // 10)
+                             self.display.get_height() // 100, self.display.get_width() // 7,
+                             self.display.get_height() // 10)
 
             # field with atoms
             x1, y1 = current_x, current_y
@@ -102,10 +100,7 @@ class Game:
                 elif event.type == pygame.VIDEORESIZE:  # change of window size
                     self.font = pygame.font.Font('freesansbold.ttf', self.display.get_width() // 43)
                     picture = pygame.transform.scale(bg, (self.display.get_width(), self.display.get_height()))
-                    size = self.display.get_height() // int(self.field_size * 1.7)
-                    current_x, current_y = (self.display.get_width() // 2 - (self.field_size / 2) * (
-                                size + 10)) + 5, self.display.get_height() // 2 - (self.field_size / 2) * (
-                                                     size + 10) + self.display.get_height() // 100
+                    size, current_x, current_y = self.get_current_coordination()
 
                 elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # left button click
                     if self.end_game:  # after game end initialize return to menu
@@ -121,6 +116,14 @@ class Game:
             return False
         else:  # return to menu
             return True
+
+    def get_current_coordination(self):
+        size = self.display.get_height() // int(self.field_size * 1.7)
+        current_x, current_y = (self.display.get_width() // 2 - (self.field_size / 2) * (size + 10)) + 5, \
+                               self.display.get_height() // 2 - (self.field_size / 2) * (
+                                       size + 10) + self.display.get_height() // 100
+
+        return size, current_x, current_y
 
     def change(self, counter):
         """ change helper text after player turn """
@@ -166,7 +169,7 @@ class Game:
 
         for x in range(self.field_size):
             helper = []
-            for a in range(self.field_size):
+            for y in range(self.field_size):
                 b = atoms.Atom(self.display, self.counter, 0, [], self.numbers, self.field_size)
                 helper += [b]
 
@@ -175,13 +178,12 @@ class Game:
         move = [[0, 1], [0, -1], [1, 0], [-1, 0]]
 
         for x in range(self.field_size):  # try all neighbours
-            for a in range(self.field_size):
-                for heave in range(len(move)):
-                    current_x = x + move[heave][0]
-                    current_a = a + move[heave][1]
-                    if (current_x < self.field_size) and (current_x >= 0) and (current_a < self.field_size) and (
-                            current_a >= 0):
-                        self.atoms[x][a].add_neighbour(self.atoms[current_x][current_a])  # add neighbour to atom
+            for y in range(self.field_size):
+                for dx, dy in move:
+                    current_x = x + dx
+                    current_y = y + dy
+                    if 0 <= current_x < self.field_size and 0 <= current_y < self.field_size:
+                        self.atoms[x][y].add_neighbour(self.atoms[current_x][current_y])  # add neighbour to atom
 
 
 if __name__ == "__main__":
