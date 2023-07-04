@@ -11,6 +11,8 @@ import random
 
 import numpy as np
 
+from utils import try_all_neighbours
+
 
 class Computer:
     def __init__(self, field_size):
@@ -56,15 +58,7 @@ class Computer:
                 self.copy[x, y] = AtomsCopy([], self.atoms[x, y].text, self.atoms[x, y].color, x, y)
                 numbers[x, y] = self.atoms[x, y].text
 
-        move = [[0, 1], [0, -1], [1, 0], [-1, 0]]
-
-        for x in range(self.field_size):  # try all neighbours
-            for y in range(self.field_size):
-                for dx, dy in move:
-                    current_x = x + dx
-                    current_y = y + dy
-                    if 0 <= current_x < self.field_size and 0 <= current_y < self.field_size:
-                        self.copy[x][y].add_neighbour(self.copy[current_x][current_y])  # add neighbour to atom
+        try_all_neighbours(self.field_size, self.copy)
 
         return numbers
 

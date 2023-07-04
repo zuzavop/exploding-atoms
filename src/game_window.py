@@ -13,6 +13,7 @@ import atoms
 import button
 import computer_player
 from setting import colors, background_path
+from src.utils import try_all_neighbours
 
 
 class Counter:
@@ -23,6 +24,12 @@ class Counter:
 
     def draw(self):
         self.counter = (self.counter + 1) % 2
+
+    def is_blue_turn(self):
+        return self.counter == 0
+
+    def is_red_turn(self):
+        return self.counter == 1
 
 
 class Game:
@@ -69,7 +76,7 @@ class Game:
             self.display.blit(picture, (0, 0))  # set background
 
             # control current player and set help
-            self.change(self.counter.counter)
+            self.change()
             self.display.blit(self.title, (
                 self.display.get_width() // 2 - self.title.get_rect().width // 2, self.display.get_height() // 30))
 
@@ -80,14 +87,14 @@ class Game:
             # field with atoms
             x1, y1 = current_x, current_y
             for x in range(len(self.atoms)):
-                for a in range(len(self.atoms[x])):
-                    self.atoms[x][a].run(size, x1, y1)
+                for y in range(len(self.atoms[x])):
+                    self.atoms[x][y].run(size, x1, y1)
                     x1 += size + 10
                 x1 = current_x
                 y1 += size + 10
 
             self.win_check()  # control of end
-            if self.counter.counter == 1 and self.computer_play:
+            if self.counter.is_red_turn() and self.computer_play:
                 pygame.display.update()  # because of title that computer is on turn
                 pygame.time.wait(100)
                 self.computer.on_turn(self.atoms, self.numbers)
@@ -107,8 +114,8 @@ class Game:
                         self.running = False
                     else:
                         for x in range(len(self.atoms)):
-                            for a in range(len(self.atoms[x])):
-                                self.atoms[x][a].clicked()  # find clicked atom
+                            for y in range(len(self.atoms[x])):
+                                self.atoms[x][y].clicked()  # find clicked atom
 
             pygame.display.update()
 
@@ -125,22 +132,20 @@ class Game:
 
         return size, current_x, current_y
 
-    def change(self, counter):
+    def change(self):
         """ change helper text after player turn """
-        if counter == 1:
-            self.title = self.font.render('Na tahu je druhý hráč', True, colors["red"])
+        if self.counter.is_red_turn():
             if self.computer_play:
                 self.title = self.font.render('Na tahu je počítač', True, colors["red"])
+            else:
+                self.title = self.font.render('Na tahu je druhý hráč', True, colors["red"])
         else:
             self.title = self.font.render('Na tahu je první hráč', True, colors["aqua"])
 
     def win_check(self):
         """ control of end of game """
         if self.numbers["red"] >= self.field_size * self.field_size:
-            if self.computer_play:
-                self.win("počítač", colors["red"])
-            else:
-                self.win("druhý hráč", colors["red"])
+            self.win("počítač" if self.computer_play else "druhý hráč", colors["red"])
         elif self.numbers["blue"] >= self.field_size * self.field_size:
             self.win("první hráč", colors["aqua"])
 
@@ -170,20 +175,10 @@ class Game:
         for x in range(self.field_size):
             helper = []
             for y in range(self.field_size):
-                b = atoms.Atom(self.display, self.counter, 0, [], self.numbers, self.field_size)
-                helper += [b]
-
+                helper += [atoms.Atom(self, 0, [])]
             self.atoms.append(helper)  # add line to list
 
-        move = [[0, 1], [0, -1], [1, 0], [-1, 0]]
-
-        for x in range(self.field_size):  # try all neighbours
-            for y in range(self.field_size):
-                for dx, dy in move:
-                    current_x = x + dx
-                    current_y = y + dy
-                    if 0 <= current_x < self.field_size and 0 <= current_y < self.field_size:
-                        self.atoms[x][y].add_neighbour(self.atoms[current_x][current_y])  # add neighbour to atom
+        try_all_neighbours(self.field_size, self.atoms)
 
 
 if __name__ == "__main__":
