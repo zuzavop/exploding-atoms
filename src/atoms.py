@@ -9,8 +9,7 @@ zimní semestr 2020/21
 
 import pygame
 
-# kvuli pouziti jinych odstinu barev
-colors = {"blue": (58, 214, 204), "red": (255, 36, 36), "black": "black"}
+from setting import colors
 
 
 class Atom:
@@ -30,7 +29,7 @@ class Atom:
         self.y = y
         self.size = size
 
-        pygame.draw.rect(self.display, "white", (x, y, size, size))
+        pygame.draw.rect(self.display, colors["white"], (x, y, size, size))
 
         small_text = pygame.font.Font("freesansbold.ttf", size // 2)
         text_surf = small_text.render(f" {self.text} ", True, colors[self.color])

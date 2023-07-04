@@ -12,10 +12,7 @@ import pygame
 import atoms
 import button
 import computer_player
-
-# nastaveni barev
-aqua = (114, 242, 208)
-red = (255, 36, 36)
+from setting import colors
 
 
 class Counter:
@@ -44,8 +41,8 @@ class Game:
         self.font = pygame.font.Font('freesansbold.ttf', self.display.get_width() // (self.field_size * 5))
 
         # nastaveni napisu
-        self.title = self.font.render('Na tahu je první hráč', True, aqua)
-        self.text = self.font.render('', True, aqua)
+        self.title = self.font.render('Na tahu je první hráč', True, colors["aqua"])
+        self.text = self.font.render('', True, colors["aqua"])
 
         # knihovna urcujici pocet zabarvenych poli
         self.numbers = {"black": self.field_size * self.field_size, "red": 0, "blue": 0}
@@ -62,7 +59,7 @@ class Game:
         """cyklus hry"""
         self.buttons()
 
-        bg = pygame.image.load("res/universe.jpg")
+        bg = pygame.image.load("..\\res\\universe.jpg")
         picture = pygame.transform.scale(bg, (self.display.get_width(), self.display.get_height()))
 
         # nastaveni velikosti a zakladni souradnice molekul
@@ -70,6 +67,9 @@ class Game:
         currentx, currenty = (self.display.get_width() // 2 - (self.field_size / 2) * (
                     size + 10)) + 5, self.display.get_height() // 2 - (self.field_size / 2) * (
                                          size + 10) + self.display.get_height() // 100
+
+        # vytvoreni zpetneho tlacitka
+        back_button = button.Button("Zpět", colors["white"], colors["aqua"], self.exit)
 
         while self.running:
             self.display.blit(picture, (0, 0))  # nastaveni pozadi
@@ -79,10 +79,9 @@ class Game:
             self.display.blit(self.title, (
             self.display.get_width() // 2 - self.title.get_rect().width // 2, self.display.get_height() // 30))
 
-            # vytvoreni zpetneho tlacitka
-            button.Button(self.display, "Zpět", self.display.get_width() - (self.display.get_width() / 20),
-                          self.display.get_height() // 100, self.display.get_width() // 7,
-                          self.display.get_height() // 10, "white", aqua, self.exit)
+            back_button.show(self.display, self.display.get_width() - (self.display.get_width() / 20),
+                      self.display.get_height() // 100, self.display.get_width() // 7,
+                      self.display.get_height() // 10)
 
             # zobrazovani pole s atomy
             x1, y1 = currentx, currenty
@@ -131,21 +130,21 @@ class Game:
     def change(self, counter):
         """po odehrani hrace zmeni napis s aktualnim hracem"""
         if counter == 1:
-            self.title = self.font.render('Na tahu je druhý hráč', True, red)
+            self.title = self.font.render('Na tahu je druhý hráč', True, colors["red"])
             if self.computer_play:
-                self.title = self.font.render('Na tahu je počítač', True, red)
+                self.title = self.font.render('Na tahu je počítač', True, colors["red"])
         else:
-            self.title = self.font.render('Na tahu je první hráč', True, aqua)
+            self.title = self.font.render('Na tahu je první hráč', True, colors["aqua"])
 
     def win_check(self):
         """kontrola jestli nekdo jiz nevyhral a pripadne ukonceni aktualni hry"""
         if self.numbers["red"] >= self.field_size * self.field_size:
             if self.computer_play:
-                self.win("počítač", red)
+                self.win("počítač", colors["red"])
             else:
-                self.win("druhý hráč", red)
+                self.win("druhý hráč", colors["red"])
         elif self.numbers["blue"] >= self.field_size * self.field_size:
-            self.win("první hráč", aqua)
+            self.win("první hráč", colors["aqua"])
 
     def exit(self):
         """ukonceni aktualniho okna"""

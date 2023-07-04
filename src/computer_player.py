@@ -74,8 +74,8 @@ class Computer:
     def pick_atom(self):
         """zkousi simulovat zvetsovani nekterych atomu a vybere nejlepsi mozny"""
         optimal = []
-        danger_atoms = self.find_danger(1,
-                                        "blue")  # najde nebezpecne atomy soupere, tedy ty ktere mohou explodovat v nasledujicim kole
+        # najde nebezpecne atomy soupere, tedy ty ktere mohou explodovat v nasledujicim kole
+        danger_atoms = self.find_danger(1,"blue")
         good_choice = self.find_danger(2, "red")  # najde atomy, ktere mohou explodovat do dvou kol
         if danger_atoms:
             numbers = self.make_copy()

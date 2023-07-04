@@ -13,10 +13,10 @@ import pygame
 import main_window
 
 # nastaveni ikony a nazvu hry
-programIcon = pygame.image.load('..\res\icon.png')
+programIcon = pygame.image.load('..\\res\\icon.png')
 pygame.display.set_icon(programIcon)
 pygame.display.set_caption("Exploding Atoms")
 
 # spusteni hlavniho okna s menu
 menu = main_window.Menu()
-menu.start()
+menu.main_cycle()
